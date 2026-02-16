@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Route, FileText, FileSearch, FilePlus, Settings, Headphones } from "lucide-react";
+import { LayoutDashboard, Route, FileText, FileSearch, FilePlus, Settings, Headphones, Menu, X } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const navItems = [
@@ -13,15 +14,17 @@ const navItems = [
 
 const AppSidebar = () => {
   const location = useLocation();
+  const [open, setOpen] = useState(false);
 
-  return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col bg-sidebar text-sidebar-foreground">
-      {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-6 border-b border-sidebar-border">
+  const sidebarContent = (
+    <>
+      <div className="flex items-center justify-between px-6 py-6 border-b border-sidebar-border">
         <img src={logo} alt="Taxi Truck" className="h-12 w-auto" />
+        <button onClick={() => setOpen(false)} className="lg:hidden text-sidebar-foreground/70 hover:text-sidebar-foreground">
+          <X className="h-5 w-5" />
+        </button>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1">
         {navItems.map(({ to, label, icon: Icon }) => {
           const isActive = location.pathname === to;
@@ -29,6 +32,7 @@ const AppSidebar = () => {
             <NavLink
               key={to}
               to={to}
+              onClick={() => setOpen(false)}
               className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-heading font-bold uppercase tracking-wide transition-all ${
                 isActive
                   ? "bg-primary text-primary-foreground shadow-lg"
@@ -42,7 +46,6 @@ const AppSidebar = () => {
         })}
       </nav>
 
-      {/* Footer */}
       <div className="border-t border-sidebar-border px-4 py-4">
         <div className="flex items-center gap-2 text-xs text-sidebar-foreground/50 mb-3">
           <div className="h-2 w-2 rounded-full bg-brand-success" />
@@ -53,7 +56,34 @@ const AppSidebar = () => {
           Soporte Flecha
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile hamburger */}
+      <button
+        onClick={() => setOpen(true)}
+        className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-secondary-foreground shadow-lg lg:hidden"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+
+      {/* Mobile overlay */}
+      {open && (
+        <div className="fixed inset-0 z-40 bg-brand-black/60 lg:hidden" onClick={() => setOpen(false)} />
+      )}
+
+      {/* Mobile sidebar */}
+      <aside className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col bg-sidebar text-sidebar-foreground transition-transform duration-300 lg:hidden ${open ? "translate-x-0" : "-translate-x-full"}`}>
+        {sidebarContent}
+      </aside>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:flex fixed left-0 top-0 z-40 h-screen w-64 flex-col bg-sidebar text-sidebar-foreground">
+        {sidebarContent}
+      </aside>
+    </>
   );
 };
 
