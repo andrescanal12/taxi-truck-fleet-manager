@@ -1,0 +1,59 @@
+/* Taxi Truck Design System Variables */
+
+:root {
+  /* Brand Colors */
+  --tt-black: #000000;
+  --tt-black-soft: #1A1A1A;
+  --tt-yellow: #FFD000;
+  --tt-yellow-alt: #FDB913;
+  --tt-white: #FFFFFF;
+  --tt-gray: #808080;
+  --tt-gray-light: #F5F5F5;
+
+  /* Typography */
+  --tt-font-display: 'Montserrat', 'Bebas Neue', sans-serif;
+  --tt-font-body: 'Roboto', 'Open Sans', Helvetica, sans-serif;
+
+  /* Spacing & Borders */
+  --tt-spacing-sm: 8px;
+  --tt-spacing-md: 16px;
+  --tt-spacing-lg: 32px;
+  --tt-radius: 4px; /* Industrial feel, slight rounding */
+}
+
+/* Utility Class for Brand Button */
+.tt-button-primary {
+  background-color: var(--tt-yellow);
+  color: var(--tt-black);
+  font-family: var(--tt-font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border: none;
+  cursor: pointer;
+  letter-spacing: -0.5px;
+  transition: transform 0.1s ease, background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tt-button-primary:hover {
+  background-color: var(--tt-yellow-alt);
+  transform: translateY(-1px);
+}
+
+.tt-button-primary:active {
+  transform: translateY(0);
+}
+
+/* Hazard Pattern Utility */
+.tt-hazard-bg {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--tt-yellow),
+    var(--tt-yellow) 10px,
+    var(--tt-black) 10px,
+    var(--tt-black) 20px
+  );
+}
