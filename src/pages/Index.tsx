@@ -26,7 +26,7 @@ const Index = () => {
   return (
     <AppLayout title="Dashboard">
       {/* Stats */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 mb-8">
         {stats.map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -104,7 +104,7 @@ const Index = () => {
             Ver Todas
           </Link>
         </div>
-        <div className="rounded-xl border border-border bg-card overflow-hidden">
+        <div className="rounded-xl border border-border bg-card overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/50">
