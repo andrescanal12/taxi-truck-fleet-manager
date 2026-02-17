@@ -158,7 +158,14 @@ const FacturasPage = () => {
                           <input type="number" value={l.cantidad} onChange={(e) => updateLinea(i, "cantidad", parseInt(e.target.value) || 0)} className="w-full bg-transparent text-sm text-center focus:outline-none" />
                         </td>
                         <td className="px-4 py-2">
-                          <input type="number" step="0.01" value={l.precioUnitario} onChange={(e) => updateLinea(i, "precioUnitario", parseFloat(e.target.value) || 0)} className="w-full bg-transparent text-sm text-right focus:outline-none" placeholder="0.00" />
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={l.precioUnitario || ""}
+                            onChange={(e) => updateLinea(i, "precioUnitario", e.target.value === "" ? 0 : parseFloat(e.target.value))}
+                            className="w-full bg-transparent text-sm text-right focus:outline-none"
+                            placeholder="0.00"
+                          />
                         </td>
                         <td className="px-4 py-2 text-right font-heading font-bold">€{(l.cantidad * l.precioUnitario).toFixed(2)}</td>
                         <td className="px-2">

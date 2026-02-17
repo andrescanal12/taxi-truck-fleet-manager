@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import AppLayout from "@/components/AppLayout";
 import { useWebhooks } from "@/contexts/WebhookContext";
-import { FileSearch, Upload, Send, AlertCircle, FileText, X } from "lucide-react";
+import { FileSearch, Upload, Send, AlertCircle, FileText, X, Camera } from "lucide-react";
 import { toast } from "sonner";
 
 const ExtractorPage = () => {
@@ -12,6 +12,10 @@ const ExtractorPage = () => {
   const [sending, setSending] = useState(false);
   const [extractedData, setExtractedData] = useState<Record<string, string> | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleFile = useCallback((f: File) => {
     setFile(f);
@@ -31,6 +35,65 @@ const ExtractorPage = () => {
     const f = e.dataTransfer.files[0];
     if (f) handleFile(f);
   }, [handleFile]);
+
+  // Effect to assign stream to video element when camera opens
+  useEffect(() => {
+    if (cameraOpen && stream && videoRef.current) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [cameraOpen, stream]);
+
+  const openCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "environment",
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
+        }
+      });
+      setStream(mediaStream);
+      setCameraOpen(true);
+    } catch (error) {
+      toast.error("No se pudo acceder a la cámara");
+      console.error(error);
+    }
+  };
+
+  const capturePhoto = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+
+    if (!context) return;
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw video frame to canvas
+    context.drawImage(video, 0, 0);
+
+    // Convert canvas to blob and create file
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], `factura-${Date.now()}.jpg`, { type: "image/jpeg" });
+        handleFile(file);
+        closeCamera();
+        toast.success("Foto capturada correctamente");
+      }
+    }, "image/jpeg", 0.95);
+  };
+
+  const closeCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setCameraOpen(false);
+  };
 
   const handleSubmit = async () => {
     if (!config.extractorWebhook) {
@@ -92,29 +155,39 @@ const ExtractorPage = () => {
           {/* Upload area */}
           <div className="space-y-4">
             <h2 className="text-base font-heading font-extrabold uppercase">Subir Factura</h2>
-            
+
             {!file ? (
-              <div
-                onDrop={handleDrop}
-                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                onDragLeave={() => setDragOver(false)}
-                className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-12 text-center transition-all cursor-pointer ${
-                  dragOver ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/50"
-                }`}
-                onClick={() => document.getElementById("file-input")?.click()}
-              >
-                <Upload className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="font-heading font-bold uppercase text-foreground mb-1">Arrastra tu factura aquí</p>
-                <p className="text-sm text-muted-foreground">o haz clic para seleccionar</p>
-                <p className="text-xs text-muted-foreground mt-2">PDF, JPG, PNG</p>
-                <input
-                  id="file-input"
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  className="hidden"
-                  onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
-                />
-              </div>
+              <>
+                <div
+                  onDrop={handleDrop}
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  className={`flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-12 text-center transition-all cursor-pointer ${dragOver ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/50"
+                    }`}
+                  onClick={() => document.getElementById("file-input")?.click()}
+                >
+                  <Upload className="h-12 w-12 text-muted-foreground mb-4" />
+                  <p className="font-heading font-bold uppercase text-foreground mb-1">Arrastra tu factura aquí</p>
+                  <p className="text-sm text-muted-foreground">o haz clic para seleccionar</p>
+                  <p className="text-xs text-muted-foreground mt-2">PDF, JPG, PNG</p>
+                  <input
+                    id="file-input"
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    className="hidden"
+                    onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+                  />
+                </div>
+
+                {/* Camera Button */}
+                <button
+                  onClick={openCamera}
+                  className="w-full flex items-center justify-center gap-2 rounded-lg bg-secondary border border-border px-4 py-3 font-heading font-bold uppercase text-sm text-white hover:bg-muted transition-colors"
+                >
+                  <Camera className="h-5 w-5" />
+                  Tomar Foto
+                </button>
+              </>
             ) : (
               <div className="rounded-xl border border-border bg-card p-5 space-y-4">
                 <div className="flex items-center justify-between">
@@ -150,7 +223,7 @@ const ExtractorPage = () => {
           {/* Extracted Data */}
           <div className="space-y-4">
             <h2 className="text-base font-heading font-extrabold uppercase">Datos Extraídos</h2>
-            
+
             {extractedData ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -173,6 +246,71 @@ const ExtractorPage = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* Camera Modal */}
+      <AnimatePresence>
+        {cameraOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+            onClick={closeCamera}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-2xl bg-card rounded-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-border bg-muted/50">
+                <h3 className="font-heading font-bold text-lg">Capturar Factura</h3>
+                <button
+                  onClick={closeCamera}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Video Preview */}
+              <div className="relative bg-black aspect-video">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  onLoadedMetadata={(e) => {
+                    const video = e.currentTarget;
+                    video.play().catch(err => console.error("Error playing video:", err));
+                  }}
+                  className="w-full h-full object-cover"
+                />
+                <canvas ref={canvasRef} className="hidden" />
+              </div>
+
+              {/* Controls */}
+              <div className="p-6 flex justify-center gap-4">
+                <button
+                  onClick={capturePhoto}
+                  className="flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-heading font-bold uppercase text-sm text-primary-foreground hover:bg-brand-yellow-hover transition-colors shadow-lg"
+                >
+                  <Camera className="h-5 w-5" />
+                  Capturar
+                </button>
+                <button
+                  onClick={closeCamera}
+                  className="flex items-center justify-center gap-2 rounded-lg bg-secondary border border-border px-6 py-3 font-heading font-bold uppercase text-sm text-white hover:bg-muted transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AppLayout>
   );
 };
