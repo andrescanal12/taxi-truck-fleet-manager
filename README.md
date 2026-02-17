@@ -1,73 +1,60 @@
-# Welcome to your Lovable project
+# 🚕 Taxi Truck Fleet Manager
 
-## Project info
+¡Bienvenido al sistema de gestión de flotas de **Taxi Truck**! Esta plataforma está diseñada para centralizar y optimizar todas las operaciones logísticas, desde la solicitud de servicios hasta la facturación automatizada.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Características Principales
 
-## How can I edit this code?
+- **Dashboard Inteligente**: Visualización en tiempo real del estado de la flota y métricas clave.
+- **Gestión de Servicios**: Solicitud y seguimiento detallado de traslados y repartos.
+- **Logística Operativa**: Gestión de rutas, albaranes y asignación de trabajadores.
+- **Facturación Avanzada**: Generación manual y automatizada de facturas.
+- **Extractor de Datos**: Herramienta para procesamiento y exportación de información.
+- **Panel de Ajustes**: Configuración personalizada del sistema y webhooks.
 
-There are several ways of editing your application.
+## 🎨 Identidad Visual (Branding)
 
-**Use Lovable**
+Este proyecto sigue estrictamente la identidad de marca de **Taxi Truck**:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- **Colores**: Negro Intenso (`#000000`) y Amarillo Vibrante (`#FFD000`).
+- **Estilo**: Industrial-Moderno, enfocado en la rapidez y la eficiencia.
+- **Tipografía**: Montserrat (Títulos) y Open Sans (Cuerpo).
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Tecnologías
 
-**Use your preferred IDE**
+- **Frontend**: React + TypeScript
+- **Bundler**: Vite
+- **Estilos**: Tailwind CSS + Shadcn UI
+- **Estado/Datos**: TanStack Query (React Query)
+- **Animaciones**: Framer Motion
+- **Iconografía**: Lucide React
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 💻 Desarrollo Local
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Para poner en marcha el proyecto en tu entorno local, sigue estos pasos:
 
-Follow these steps:
+1. **Instalar dependencias**:
+   ```sh
+   npm install
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. **Iniciar servidor de desarrollo**:
+   ```sh
+   npm run dev
+   ```
+   La aplicación estará disponible en [http://localhost:8080](http://localhost:8080).
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3. **Construir para producción**:
+   ```sh
+   npm run build
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 📂 Estructura del Proyecto
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+- `src/pages`: Pantallas principales de la aplicación.
+- `src/components`: Componentes reutilizables siguiendo el sistema de diseño.
+- `src/contexts`: Gestión de estado global (Servicios, Webhooks).
+- `src/hooks`: Lógica extraída para componentes funcionales.
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Desarrollado con ❤️ para **Taxi Truck**. Speed. Simplicity. Efficiency.

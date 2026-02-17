@@ -55,6 +55,9 @@
     --brand-success: 142 71% 45%;
     --brand-warning: 38 92% 50%;
     --brand-info: 210 100% 50%;
+
+    /* Tracking Page Specific Tokens */
+    --surface-dark: 0 0% 7%;
   }
 }
 
@@ -67,7 +70,12 @@
     @apply bg-background text-foreground font-body antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading font-extrabold tracking-tight uppercase;
   }
 
@@ -119,29 +127,76 @@
   .brand-gradient {
     background: linear-gradient(135deg, hsl(var(--brand-yellow)) 0%, hsl(45 100% 42%) 100%);
   }
-  
+
   .speed-lines {
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 4px,
-      hsl(var(--brand-yellow) / 0.1) 4px,
-      hsl(var(--brand-yellow) / 0.1) 5px
-    );
+    background-image: repeating-linear-gradient(0deg,
+        transparent,
+        transparent 4px,
+        hsl(var(--brand-yellow) / 0.1) 4px,
+        hsl(var(--brand-yellow) / 0.1) 5px);
   }
 
   .caution-stripe {
-    background-image: repeating-linear-gradient(
-      -45deg,
-      hsl(var(--brand-yellow)),
-      hsl(var(--brand-yellow)) 10px,
-      hsl(var(--brand-black)) 10px,
-      hsl(var(--brand-black)) 20px
-    );
+    background-image: repeating-linear-gradient(-45deg,
+        hsl(var(--brand-yellow)),
+        hsl(var(--brand-yellow)) 10px,
+        hsl(var(--brand-black)) 10px,
+        hsl(var(--brand-black)) 20px);
   }
 
   .text-gradient-brand {
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(135deg, hsl(var(--brand-yellow)) 0%, hsl(38 100% 50%) 100%);
+  }
+
+  /* Tracking Page Utilities */
+  .glass-panel {
+    background: rgba(18, 18, 18, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 208, 0, 0.1);
+  }
+
+  .map-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .pulse-yellow {
+    box-shadow: 0 0 0 0 rgba(255, 208, 0, 0.7);
+    animation: pulse-yellow 2s infinite;
+  }
+
+  @keyframes pulse-yellow {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(255, 208, 0, 0.7);
+    }
+
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px rgba(255, 208, 0, 0);
+    }
+
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 rgba(255, 208, 0, 0);
+    }
+  }
+
+  .status-dot-green {
+    background-color: #10b981;
+    box-shadow: 0 0 8px #10b981;
+  }
+
+  .status-dot-yellow {
+    background-color: #fbbf24;
+    box-shadow: 0 0 8px #fbbf24;
+  }
+
+  .status-dot-red {
+    background-color: #ef4444;
+    box-shadow: 0 0 8px #ef4444;
   }
 }

@@ -61,6 +61,7 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        "surface-dark": "hsl(var(--surface-dark))",
         brand: {
           yellow: "hsl(var(--brand-yellow))",
           "yellow-hover": "hsl(var(--brand-yellow-hover))",

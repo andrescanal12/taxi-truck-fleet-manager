@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Seguimiento de Flota en Vivo Premium</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ffd000",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#000000",
+                        "surface-dark": "#121212",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            background-color: #000000;
+        }
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 208, 0, 0.1);
+        }
+        .map-grid {
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .pulse-yellow {
+            box-shadow: 0 0 0 0 rgba(255, 208, 0, 0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 208, 0, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 208, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 208, 0, 0); }
+        }
+        .status-dot-green { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
+        .status-dot-yellow { background-color: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
+        .status-dot-red { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-white overflow-hidden">
+<div class="relative flex h-screen w-full bg-background-dark font-display">
+<!-- Main Map Background -->
+<div class="absolute inset-0 z-0 bg-background-dark overflow-hidden">
+<div class="absolute inset-0 map-grid opacity-20"></div>
+<!-- Mock Map Elements -->
+<div class="relative h-full w-full">
+<!-- Vehicle Marker 1 -->
+<div class="absolute top-1/4 left-1/3 z-10">
+<div class="relative flex items-center justify-center">
+<div class="absolute w-8 h-8 bg-primary/20 rounded-full pulse-yellow"></div>
+<div class="relative bg-primary text-black p-1.5 rounded-lg shadow-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] font-bold">local_shipping</span>
+</div>
+</div>
+<div class="mt-2 bg-black/80 px-2 py-0.5 rounded text-[10px] border border-primary/30 uppercase tracking-tighter">T-01 • 85 km/h</div>
+</div>
+<!-- Vehicle Marker 2 -->
+<div class="absolute bottom-1/3 right-1/4 z-10 opacity-60">
+<div class="relative flex items-center justify-center">
+<div class="absolute w-8 h-8 bg-white/10 rounded-full"></div>
+<div class="relative bg-zinc-800 text-white p-1.5 rounded-lg border border-white/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+</div>
+</div>
+<div class="mt-2 bg-black/80 px-2 py-0.5 rounded text-[10px] border border-white/10 uppercase tracking-tighter">V-04 • Detenido</div>
+</div>
+<!-- Active Route Line -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none opacity-40">
+<path d="M 400 300 Q 550 450 700 600" fill="none" stroke="#ffd000" stroke-dasharray="8 4" stroke-width="4"></path>
+<path d="M 150 150 L 320 230" fill="none" stroke="#ffd000" stroke-width="3"></path>
+</svg>
+</div>
+<img alt="Vista de mapa oscuro de la ciudad" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-30" data-location="Mexico City Dark Mode Map View" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaNBZCUaiUWZel-BboNCtAavwY3mFBET86ypSvekzz3fQIk6bu6NqPwksayjIAvTOXFX2TVf_pBQX-qq5d2mel1wV6mqt5Q6SQmt3Abo56FFZU0hsMPi4Zoj_sdZG_H51hA3aUiS7cwKIMoVaDcimOzS-qvK-gjE3ZEK8OmH7N5Z9bS2S2mBxuDaUck-5tTz-ndA4ZA5cftcvJrLXmuwDMuCUsC8a4lay6-kKsmRMBMuageBTjggTQmcdMi5UC4zSqpGTfTbO78ZD2"/>
+</div>
+<!-- Left Mini-Rail Navigation -->
+<div class="relative z-50 w-16 h-full flex flex-col items-center py-6 bg-black border-r border-white/10">
+<div class="mb-10 text-primary">
+<span class="material-symbols-outlined text-3xl">radar</span>
+</div>
+<nav class="flex flex-col gap-8 flex-1">
+<a class="text-white/40 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">grid_view</span>
+</a>
+<a class="text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1">map</span>
+</a>
+<a class="text-white/40 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+</a>
+<a class="text-white/40 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</a>
+</nav>
+<div class="mt-auto">
+<div class="w-10 h-10 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-white/40">settings</span>
+</div>
+</div>
+</div>
+<!-- Main Content Area -->
+<div class="relative flex-1 flex flex-col h-full pointer-events-none">
+<!-- Header Overlay -->
+<header class="p-6 flex justify-between items-center pointer-events-auto">
+<div class="glass-panel px-4 py-2 rounded-xl border-white/5 flex items-center gap-3">
+<div class="h-2 w-2 rounded-full status-dot-green animate-pulse"></div>
+<span class="text-sm font-bold tracking-widest uppercase">Seguimiento en Vivo</span>
+</div>
+<div class="flex gap-4">
+<div class="glass-panel px-4 py-2 rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm placeholder:text-white/20 w-32 md:w-48" placeholder="Buscar unidad..." type="text"/>
+</div>
+</div>
+</header>
+<!-- Bottom Layout: Left Status and Bottom Right Selected -->
+<div class="mt-auto p-4 flex flex-col md:flex-row gap-4 items-end justify-between overflow-hidden">
+<!-- Left Status Panel (Floating) -->
+<div class="glass-panel w-full md:w-72 rounded-2xl p-4 pointer-events-auto shadow-2xl">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-xs font-bold text-white/50 uppercase tracking-widest">Estado de Flota</h3>
+<span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded border border-primary/20">8 ACTIVOS</span>
+</div>
+<div class="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+<!-- Vehicle Item 1 -->
+<div class="group flex flex-col gap-2 p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="status-dot-green h-2 w-2 rounded-full"></div>
+<span class="font-bold text-sm">Camión T-01</span>
+</div>
+<span class="text-[10px] text-white/40">EN RUTA</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-[10px] text-white/30 uppercase">
+<span>Combustible</span>
+<span>72%</span>
+</div>
+<div class="w-full bg-white/5 h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 72%"></div>
+</div>
+</div>
+</div>
+<!-- Vehicle Item 2 -->
+<div class="flex flex-col gap-2 p-3 rounded-lg bg-white/5 border border-white/5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="status-dot-yellow h-2 w-2 rounded-full"></div>
+<span class="font-bold text-sm">Van V-04</span>
+</div>
+<span class="text-[10px] text-white/40">RALENTÍ</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-[10px] text-white/30 uppercase">
+<span>Combustible</span>
+<span>34%</span>
+</div>
+<div class="w-full bg-white/5 h-1 rounded-full overflow-hidden">
+<div class="bg-red-500 h-full rounded-full" style="width: 34%"></div>
+</div>
+</div>
+</div>
+<!-- Vehicle Item 3 -->
+<div class="flex flex-col gap-2 p-3 rounded-lg bg-white/5 border border-white/5 opacity-50">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="status-dot-red h-2 w-2 rounded-full"></div>
+<span class="font-bold text-sm">Camión T-12</span>
+</div>
+<span class="text-[10px] text-white/40">DETENIDO</span>
+</div>
+<div class="w-full bg-white/5 h-1 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Right Detail Panel (Floating) -->
+<div class="glass-panel w-full md:w-96 rounded-2xl p-6 pointer-events-auto shadow-2xl border-t-2 border-t-primary/50">
+<div class="flex items-start gap-5 mb-6">
+<div class="relative">
+<div class="w-16 h-16 rounded-full border-2 border-primary p-0.5 shadow-[0_0_15px_rgba(255,208,0,0.3)]">
+<img alt="Perfil del Conductor" class="w-full h-full rounded-full object-cover" data-alt="Portrait of professional truck driver" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCz4KXexlFBMz13b4vzrAmUKxnvfD5gcAtiAYS3X_LaEitTSf8CGcyB0wC5w3kF-f5TYOqXZZG-ToP97EBNuyS1zOb-lABfK5fO3LGX8vvJhaNniMnc6tPTVgWDjLgn_1IW5EEgTzlELuwxAr8PNsseiIVlWULcx3gGZFD2994PsKLZeWpEr_2VR3yHOz3ltzEbOh1ohPGwXeULYAlEBQgsPLak6F7P3Y4hcT8ZthmQgSQscxC6Kfx9WJmYjW4Mi6h8XuyRH5JuBK1"/>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-primary text-black rounded-full p-1 border-2 border-black">
+<span class="material-symbols-outlined text-[12px] font-bold">verified_user</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="text-xl font-bold leading-tight">Carlos Mendoza</h2>
+<p class="text-white/40 text-xs flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                                        Av. Insurgentes Sur, CDMX
+                                    </p>
+</div>
+<div class="relative w-14 h-14 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90">
+<circle cx="28" cy="28" fill="transparent" r="24" stroke="rgba(255,255,255,0.05)" stroke-width="4"></circle>
+<circle cx="28" cy="28" fill="transparent" r="24" stroke="#ffd000" stroke-dasharray="150" stroke-dashoffset="40" stroke-width="4"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="text-[12px] font-bold">85</span>
+<span class="text-[6px] text-white/50">KM/H</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="bg-white/5 p-3 rounded-xl border border-white/5">
+<p class="text-[10px] text-white/40 uppercase tracking-widest mb-1">Destino</p>
+<p class="text-sm font-medium">Planta Norte A-4</p>
+</div>
+<div class="bg-white/5 p-3 rounded-xl border border-white/5">
+<p class="text-[10px] text-white/40 uppercase tracking-widest mb-1">Tiempo Est.</p>
+<p class="text-sm font-medium">24 min</p>
+</div>
+</div>
+<button class="w-full py-3 rounded-xl border-2 border-primary text-primary font-bold hover:bg-primary hover:text-black transition-all flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">headset_mic</span>
+                        Contactar Conductor
+                    </button>
+</div>
+</div>
+</div>
+<!-- Zoom & View Controls -->
+<div class="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-50">
+<button class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center text-white/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center text-white/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<div class="h-px bg-white/10 my-1"></div>
+<button class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+<button class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center text-white/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">layers</span>
+</button>
+</div>
+<!-- Notification Banner (Pop-up style) -->
+<div class="absolute top-6 left-1/2 -translate-x-1/2 z-[60] opacity-0 animate-bounce transition-all pointer-events-none" id="alert-banner">
+<div class="bg-red-500/90 backdrop-blur-md text-white px-6 py-2 rounded-full flex items-center gap-3 shadow-2xl border border-red-400">
+<span class="material-symbols-outlined">warning</span>
+<span class="text-sm font-bold uppercase tracking-widest">Alerta: Frenado brusco Unidad T-01</span>
+</div>
+</div>
+</div>
+<!-- Mobile Navigation Bar -->
+<div class="fixed bottom-0 left-0 w-full z-[100] md:hidden glass-panel border-t border-white/10">
+<div class="flex justify-around items-center py-3">
+<a class="flex flex-col items-center text-white/40" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-[10px] mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center text-primary" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="text-[10px] mt-1">Mapa</span>
+</a>
+<a class="flex flex-col items-center text-white/40" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] mt-1">Reportes</span>
+</a>
+<a class="flex flex-col items-center text-white/40" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] mt-1">Perfil</span>
+</a>
+</div>
+</div>
+</body></html>
